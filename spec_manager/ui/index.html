@@ -9,15 +9,19 @@
   <body>
     <header>
       <h1>spec_manager</h1>
-      <div class="bar">
-        <input id="q" type="search" placeholder="Search specs across projects…" />
-        <select id="project"><option value="">All projects</option></select>
+      <div class="filters">
+        <div class="bar">
+          <input id="content" type="search" placeholder="Search content (title + body)…" />
+          <input id="name" type="search" placeholder="Exact spec name (slug)…" />
+        </div>
+        <div id="projects" class="projects"></div>
       </div>
     </header>
     <main>
       <section id="results"></section>
       <aside id="detail"><p class="hint">Select a spec to view it.</p></aside>
     </main>
+    <script src="/filter.js"></script>
     <script src="/app.js"></script>
   </body>
 </html>

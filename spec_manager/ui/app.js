@@ -1,4 +1,6 @@
 // Read-only spec browser. Talks to the FastAPI API on the same origin.
+// Filtering (content / exact-name / multi-project) lives in filter.js and is
+// unit-tested in tests-ui/filter.test.cjs — this file is just DOM glue.
 const $ = (id) => document.getElementById(id);
 let allSpecs = [];
 
@@ -12,31 +14,36 @@ function escapeHtml(s) {
   return (s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 }
 
-async function loadSpecs() {
-  allSpecs = await json("/specs");
-  populateProjects(allSpecs);
-  render(allSpecs);
+function selectedProjects() {
+  return [...document.querySelectorAll('#projects input[type=checkbox]:checked')].map((cb) => cb.value);
 }
 
 function populateProjects(specs) {
-  const sel = $("project");
-  const seen = new Set(sel.textContent ? Array.from(sel.options).map((o) => o.value) : []);
-  specs.forEach((s) => {
-    if (!seen.has(s.project_slug)) {
-      seen.add(s.project_slug);
-      const o = document.createElement("option");
-      o.value = s.project_slug;
-      o.textContent = s.project_slug;
-      sel.appendChild(o);
-    }
-  });
+  const distinct = [...new Set(specs.map((s) => s.project_slug))].sort();
+  $("projects").innerHTML = distinct
+    .map((p) => `<label><input type="checkbox" value="${escapeHtml(p)}" checked /> ${escapeHtml(p)}</label>`)
+    .join("");
+}
+
+function currentCriteria() {
+  return { content: $("content").value, name: $("name").value, projects: selectedProjects() };
+}
+
+function applyFilters() {
+  render(filterSpecs(allSpecs, currentCriteria()));
+}
+
+async function loadSpecs() {
+  allSpecs = await json("/specs");
+  populateProjects(allSpecs);
+  applyFilters();
 }
 
 function render(list) {
   const el = $("results");
   el.innerHTML = "";
   if (!list.length) {
-    el.innerHTML = "<p class='hint'>No specs found.</p>";
+    el.innerHTML = "<p class='hint'>No specs match these filters.</p>";
     return;
   }
   list.forEach((s) => {
@@ -66,23 +73,13 @@ async function view(project, slug) {
     const b = document.createElement("button");
     b.className = "ver";
     b.textContent = `v${v.version}`;
-    b.onclick = () => {
-      $("body").textContent = v.body;
-    };
+    b.onclick = () => { $("body").textContent = v.body; };
     vd.appendChild(b);
   });
 }
 
-$("q").addEventListener("input", async () => {
-  const q = $("q").value.trim();
-  const project = $("project").value;
-  if (!q) {
-    render(project ? allSpecs.filter((s) => s.project_slug === project) : allSpecs);
-    return;
-  }
-  const hits = await json(`/search?q=${encodeURIComponent(q)}${project ? `&project=${encodeURIComponent(project)}` : ""}`);
-  render(hits);
-});
-$("project").addEventListener("change", () => $("q").dispatchEvent(new Event("input")));
+$("content").addEventListener("input", applyFilters);
+$("name").addEventListener("input", applyFilters);
+$("projects").addEventListener("change", applyFilters);
 
 loadSpecs();
