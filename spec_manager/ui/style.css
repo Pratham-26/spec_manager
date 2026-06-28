@@ -1,0 +1,42 @@
+:root {
+  --bg: #0f1115;
+  --panel: #171a21;
+  --text: #e6e6e6;
+  --muted: #8a93a3;
+  --accent: #6ea8fe;
+  --line: #262b35;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+}
+h1 { margin: 0 0 0.75rem; font-size: 1.1rem; letter-spacing: 0.02em; }
+.bar { display: flex; gap: 0.5rem; }
+#q { flex: 1; padding: 0.5rem 0.75rem; background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 6px; }
+#project { padding: 0.5rem; background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 6px; }
+main { display: grid; grid-template-columns: 360px 1fr; gap: 1px; background: var(--line); height: calc(100vh - 92px); }
+#results, #detail { background: var(--bg); overflow: auto; padding: 1rem; }
+.card { padding: 0.75rem; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); margin-bottom: 0.5rem; cursor: pointer; }
+.card:hover { border-color: var(--accent); }
+.slug { font-size: 0.8rem; color: var(--muted); }
+.title { font-weight: 600; margin: 0.15rem 0; }
+.status { font-size: 0.7rem; padding: 0.1rem 0.45rem; border-radius: 999px; background: #2a3142; color: var(--muted); text-transform: uppercase; }
+.status.approved, .status.implemented, .status.planned { background: #1f3a28; color: #8fdf9f; }
+.status.draft, .status.in_review { background: #3a3320; color: #e3cf8a; }
+.status.deprecated, .status.superseded { background: #3a2030; color: #e38aae; }
+.hint { color: var(--muted); }
+.meta { color: var(--muted); font-size: 0.85rem; margin: 0.25rem 0 1rem; }
+.versions { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.ver { background: var(--panel); color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 0.25rem 0.6rem; cursor: pointer; }
+.ver:hover { border-color: var(--accent); color: var(--text); }
+pre { white-space: pre-wrap; word-wrap: break-word; background: var(--panel); padding: 1rem; border-radius: 8px; border: 1px solid var(--line); font-size: 0.9rem; }

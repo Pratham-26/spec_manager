@@ -1,0 +1,15 @@
+# Claude Code local (machine-specific) settings — never commit
+.claude/settings.local.json
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+
+# Local spec working copies (project-specific, not this repo's content)
+.specs/
+
